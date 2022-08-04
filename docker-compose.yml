@@ -1,0 +1,45 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  webhost:
+    image: webhost
+    build:
+      context: .
+      dockerfile: WebHost/Dockerfile
+    ports:
+      - 5001:80
+    networks:
+      - dotnet-otel-logs-network
+
+  seq:
+    tty: true
+    image: datalust/seq:2022.1
+    environment:
+      ACCEPT_EULA: 'Y'
+    volumes:
+      - seqdata:/data
+    expose:
+      - "5341"
+    ports:
+      - 5002:80
+    restart: unless-stopped
+    networks:
+      - dotnet-otel-logs-network
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.56.0
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    volumes:
+      - ./dockercompose/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    expose:
+      - "4317"   # OTLP gRPC receiver
+    networks:
+      - dotnet-otel-logs-network
+
+volumes:
+  seqdata:
+
+networks:
+  dotnet-otel-logs-network:
