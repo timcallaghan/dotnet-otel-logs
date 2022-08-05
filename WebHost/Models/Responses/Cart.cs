@@ -23,3 +23,25 @@ public class CartItem
         Name = name;
     }
 }
+
+public class CartSummary
+{
+    public CartSummaryDetail CartDetails { get; }
+
+    public CartSummary(CartSummaryDetail cartSummary)
+    {
+        CartDetails = cartSummary;
+    }
+}
+
+public class CartSummaryDetail
+{
+    public int CartId { get; }
+    public int ItemsCount { get; }
+
+    public CartSummaryDetail(int cartId, int itemsCount)
+    {
+        CartId = cartId;
+        ItemsCount = itemsCount;
+    }
+}

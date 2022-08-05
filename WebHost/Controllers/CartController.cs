@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using WebHost.Models.Responses;
 
@@ -37,6 +38,10 @@ public class CartController : ControllerBase
         var cart = new Cart(id, cartItems);
         
         _logger.LogInformation("Responding with cart details: {@Cart}", new { CartId = cart.Id, ItemsCount = cart.CartItems.Count });
+
+        var cartSummary = new CartSummary(new CartSummaryDetail(cart.Id, cart.CartItems.Count));
+        _logger.LogInformation("Responding with cart summary details: {@CartSummary}", cartSummary);
+        _logger.LogInformation("Responding with cart summary details serialized: {CartSummarySerialized}", JsonSerializer.Serialize(cartSummary));
 
         return Ok(cart);
     }
